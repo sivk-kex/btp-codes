@@ -59,11 +59,13 @@ class PdfRendererTest(unittest.TestCase):
             ["pdftotext", "-layout", str(PDF), "-"],
             check=True, text=True, capture_output=True,
         ).stdout
-        declaration_page = next(page for page in extracted.split("\f") if "CANDIDATE'S DECLARATION" in page)
-        self.assertNotIn("Supervisor comments", declaration_page)
-        self.assertNotIn("Signature of Supervisor", declaration_page)
-        self.assertIn("authentic record of my own work", " ".join(declaration_page.split()))
-        self.assertIn("Place: Roorkee", declaration_page)
+        declaration_page = next(page for page in extracted.split("\f") if "DECLARATIONS" in page)
+        normalized = " ".join(declaration_page.split())
+        self.assertIn("represents my own work", normalized)
+        self.assertIn("disclosed all instances where AI", normalized)
+        self.assertIn("https://github.com/sivk-kex/btp-codes", declaration_page)
+        self.assertIn("No comments provided.", declaration_page)
+        self.assertNotIn("[I/We]", declaration_page)
 
     def test_methodology_equations_have_no_missing_glyphs(self):
         extracted = subprocess.run(

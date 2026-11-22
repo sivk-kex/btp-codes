@@ -22,6 +22,7 @@ REL = "{http://schemas.openxmlformats.org/package/2006/relationships}"
 A4_W, A4_H = 595.276, 841.89
 LEFT, RIGHT, TOP, BOTTOM = 72., 72., 72., 62.
 CONTENT_W = A4_W - LEFT - RIGHT
+NAVY = "0.122 0.247 0.498"
 
 
 TRANSLATE = str.maketrans({
@@ -216,7 +217,7 @@ class Renderer:
         size = explicit_size/2 if explicit_size else sizes.get(style, 12)
         size = min(size, 22)
         is_bold = bold or style in {"Heading1", "Heading2", "Heading3", "FrontHeading"}
-        font = "Courier" if style == "Code" else "Times-Bold" if is_bold else "Times-Roman"
+        font = "Courier" if style == "Code" else "LiberationSerif-Bold" if is_bold else "LiberationSerif"
         if style == "FrontHeading":
             align = "center"
         leading = size*1.5 if style not in {"Caption", "Code"} else size*1.25
@@ -237,7 +238,14 @@ class Renderer:
                 command = f"({escaped}) dup stringwidth pop {A4_W-RIGHT:.2f} exch sub {self.y:.2f} moveto show"
             else:
                 command = f"{LEFT:.2f} {self.y:.2f} moveto ({escaped}) show"
-            self.page.append(f"/{font} findfont {size:.2f} scalefont setfont 0 0 0 setrgbcolor {command}")
+            cover_navy = text in {
+                "INDIAN INSTITUTE OF TECHNOLOGY ROORKEE",
+                "DEPARTMENT OF CHEMICAL ENGINEERING",
+                "B.TECH. PROJECT REPORT",
+                "NONLINEAR EFFECTS ON CAPILLARY-GRAVITY WAVES",
+            }
+            color = NAVY if style in {"Heading1", "FrontHeading"} or cover_navy else "0 0 0"
+            self.page.append(f"/{font} findfont {size:.2f} scalefont setfont {color} setrgbcolor {command}")
         self.y -= after
 
     def add_table(self, rows):
@@ -268,18 +276,12 @@ class Renderer:
                     f"0.90 0.94 0.96 setrgbcolor {LEFT:.2f} {bottom:.2f} "
                     f"{CONTENT_W:.2f} {row_height:.2f} rectfill"
                 )
-            for column in range(len(cell_lines) + 1):
-                x = LEFT + column*column_width
-                self.page.append(
-                    f"0.45 setgray 0.5 setlinewidth newpath {x:.2f} {top:.2f} moveto "
-                    f"{x:.2f} {bottom:.2f} lineto stroke"
-                )
             self.page.append(
-                f"0.45 setgray 0.5 setlinewidth newpath {LEFT:.2f} {top:.2f} moveto "
+                f"{NAVY} setrgbcolor 0.8 setlinewidth newpath {LEFT:.2f} {top:.2f} moveto "
                 f"{LEFT + CONTENT_W:.2f} {top:.2f} lineto stroke newpath "
                 f"{LEFT:.2f} {bottom:.2f} moveto {LEFT + CONTENT_W:.2f} {bottom:.2f} lineto stroke"
             )
-            font = "Times-Bold" if row_index == 0 else "Times-Roman"
+            font = "LiberationSerif-Bold" if row_index == 0 else "LiberationSerif"
             for column, lines in enumerate(cell_lines):
                 x = LEFT + column*column_width + padding
                 for line_index, line in enumerate(lines):
@@ -293,7 +295,7 @@ class Renderer:
 
     def add_image(self, rel_id):
         width, height, rgb = decode_png(self.media[rel_id])
-        display_w = min(CONTENT_W, 455.)
+        display_w = 72. if rel_id == "rId91" else min(CONTENT_W, 455.)
         display_h = display_w*height/width
         if display_h > 330:
             display_h = 330.
@@ -313,6 +315,9 @@ class Renderer:
         self.y = y - 8
 
     def add_equation(self, text):
+        match = re.search(r"\s+\((\d+)\)$", text)
+        number = match.group(1) if match else None
+        text = text[:match.start()] if match else text
         width, height, rgb = decode_png(
             render_equation_png(text), max_width=1800, max_height=260
         )
@@ -331,6 +336,11 @@ class Renderer:
             "{currentfile picstr readhexstring pop} false 3 colorimage\n"
             f"{hex_lines}\ngrestore"
         )
+        if number:
+            self.page.append(
+                f"/LiberationSerif findfont 11 scalefont setfont 0 0 0 setrgbcolor "
+                f"{A4_W-RIGHT-22:.2f} {y + display_h/2:.2f} moveto (\\({number}\\)) show"
+            )
         self.y = y - 8
 
 
@@ -378,13 +388,37 @@ def render_report():
         f"%%BoundingBox: 0 0 {int(A4_W)} {int(A4_H)}",
         f"<< /PageSize [{A4_W:.3f} {A4_H:.3f}] >> setpagedevice",
     ]
+    chapter_start = max(
+        index for index, operations in enumerate(renderer.pages, 1)
+        if any("Chapter 1: Introduction" in operation for operation in operations)
+    )
+
+    def roman(number):
+        values = ((10, "x"), (9, "ix"), (5, "v"), (4, "iv"), (1, "i"))
+        result = ""
+        for value, symbol in values:
+            while number >= value:
+                result += symbol
+                number -= value
+        return result
+
     for page_number, operations in enumerate(renderer.pages, 1):
         ps.append(f"%%Page: {page_number} {page_number}")
+        if page_number == 1:
+            ps.append(
+                f"{NAVY} setrgbcolor 1.4 setlinewidth "
+                f"newpath 28 28 moveto {A4_W-28:.2f} 28 lineto {A4_W-28:.2f} {A4_H-28:.2f} "
+                f"lineto 28 {A4_H-28:.2f} lineto closepath stroke"
+            )
         ps.extend(operations)
-        ps.append(
-            f"/Times-Roman findfont 9 scalefont setfont "
-            f"({page_number}) dup stringwidth pop 2 div {A4_W/2:.2f} exch sub 30 moveto show"
+        label = "" if page_number == 1 else (
+            roman(page_number - 1) if page_number < chapter_start else str(page_number - chapter_start + 1)
         )
+        if label:
+            ps.append(
+                f"/LiberationSerif findfont 9 scalefont setfont "
+                f"({label}) dup stringwidth pop 2 div {A4_W/2:.2f} exch sub 30 moveto show"
+            )
         ps.append("showpage")
     ps.append("%%EOF")
 

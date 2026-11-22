@@ -11,6 +11,8 @@ ROOT = Path(__file__).resolve().parent
 PROJECTS = ROOT.parent
 TEMPLATE = Path("/home/redacted/Downloads/Declarations.docx")
 OUTPUT = ROOT / "output" / "Aditya_Mazumdar_CHP400A_Autumn_ETE_Report_2026.docx"
+IITR_LOGO = ROOT / "assets" / "iitr-logo.png"
+NAVY = "1F3F7F"
 
 NS = (
     'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
@@ -115,8 +117,9 @@ def bullet(text, level=0):
     return paragraph("• " + text, indent=540 + level*360, hanging=300, after=80)
 
 
-def equation(text):
-    return paragraph(text, style="Equation", align="center", before=120, after=120)
+def equation(text, number=None):
+    label = f"    ({number})" if number else ""
+    return paragraph(text + label, style="Equation", align="center", before=120, after=120)
 
 
 def table(rows, widths, *, header=True):
@@ -159,9 +162,8 @@ def png_size(path):
     return unpack(">II", data[16:24])
 
 
-def image_paragraph(path, rel_id, doc_id):
+def image_paragraph(path, rel_id, doc_id, max_w=5_852_160, max_h=4_297_680):
     width_px, height_px = png_size(path)
-    max_w, max_h = 5_852_160, 4_297_680  # 6.4 x 4.7 inches
     scale = min(max_w/width_px, max_h/height_px)
     cx, cy = int(width_px*scale), int(height_px*scale)
     drawing = f'''
@@ -188,6 +190,7 @@ def field_paragraph(instruction, fallback):
 
 
 def caption(number, text):
+    number = f"4.{number}"
     return paragraph(
         style="Caption", align="center", keep_next=False,
         runs=[run(f"Figure {number}. ", bold=True), run(text)],
@@ -196,7 +199,7 @@ def caption(number, text):
 
 def add_figure(parts, number, image_index):
     path = PROJECTS / FIGURES[image_index][0]
-    parts.append(image_paragraph(path, f"rId{100 + image_index}", number))
+    parts.append(image_paragraph(path, f"rId{100 + image_index}", image_index + 1))
     parts.append(caption(number, FIGURES[image_index][1]))
 
 
@@ -205,6 +208,7 @@ def build_body():
 
     # Cover
     p.extend([
+        image_paragraph(IITR_LOGO, "rId91", 50, 1_097_280, 1_097_280),
         paragraph("INDIAN INSTITUTE OF TECHNOLOGY ROORKEE", align="center", before=400,
                   runs=[run("INDIAN INSTITUTE OF TECHNOLOGY ROORKEE", bold=True, size=32)]),
         paragraph("DEPARTMENT OF CHEMICAL ENGINEERING", align="center",
@@ -212,7 +216,9 @@ def build_body():
         paragraph("B.TECH. PROJECT REPORT", align="center", before=900,
                   runs=[run("B.TECH. PROJECT REPORT", bold=True, size=28)]),
         paragraph("NONLINEAR EFFECTS ON CAPILLARY-GRAVITY WAVES", align="center", before=480,
-                  runs=[run("NONLINEAR EFFECTS ON CAPILLARY-GRAVITY WAVES", bold=True, size=40)]),
+                  runs=[run("NONLINEAR EFFECTS ON CAPILLARY-GRAVITY WAVES", bold=True, size=32)]),
+        paragraph("Standing and Travelling Interfacial-Wave Simulations in Basilisk", align="center",
+                  runs=[run("Standing and Travelling Interfacial-Wave Simulations in Basilisk", italic=True, size=24)]),
         paragraph("Submitted in partial fulfilment of the requirements of CHP-400A", align="center", before=480,
                   runs=[run("Submitted in partial fulfilment of the requirements of CHP-400A", italic=True)]),
         paragraph("Autumn Semester 2026", align="center", after=600),
@@ -227,7 +233,7 @@ def build_body():
 
     # Certificate and declarations
     p.extend([
-        paragraph("SUPERVISOR CERTIFICATE", style="FrontHeading"),
+        paragraph("CERTIFICATE", style="FrontHeading"),
         paragraph(
             "This is to certify that the B.Tech. project report entitled “Nonlinear Effects on "
             "Capillary-Gravity Waves”, submitted by Aditya Mazumdar (Enrollment No. 23321003) "
@@ -236,38 +242,29 @@ def build_body():
             "project work and has not been submitted elsewhere for another academic award.",
             first_line=540,
         ),
-        paragraph("Prof. Palas K. Farsoiya", before=900, runs=[run("Prof. Palas K. Farsoiya", bold=True)]),
+        paragraph("____________________________", before=900),
+        paragraph("Prof. Palas K. Farsoiya", runs=[run("Prof. Palas K. Farsoiya", bold=True)]),
         paragraph("Project Supervisor"),
         paragraph("Department of Chemical Engineering"),
         paragraph("Indian Institute of Technology Roorkee"),
-        paragraph("Date:"),
+        paragraph("Date: ____________________"),
         page_break(),
-        paragraph("DECLARATIONS", style="FrontHeading"),
-        heading("Candidate declaration", 2),
+        paragraph("CANDIDATE’S DECLARATION", style="FrontHeading"),
         paragraph(
             "I hereby declare that the report for CHP-400A titled “Nonlinear Effects on "
             "Capillary-Gravity Waves” represents my own work carried out under the supervision "
             "of Prof. Palas K. Farsoiya.", first_line=540,
         ),
-        paragraph("Aditya Mazumdar | Enrollment No. 23321003", before=420),
-        heading("AI-use declaration", 2),
-        paragraph(
-            "I hereby declare that I have disclosed all instances where AI (Artificial "
-            "Intelligence) was used in creation of this report. AI use was limited to code "
-            "drafting, report organization, and language editing.", first_line=540,
-        ),
-        paragraph("Aditya Mazumdar", before=360),
-        heading("Data and code declaration", 2),
         paragraph(
             "The original code, simulation inputs, numerical outputs, and plotting scripts used "
             "in this report are available to the evaluation committee through: "
             "https://github.com/sivk-kex/btp-codes.", first_line=540,
         ),
-        paragraph("Signature of Supervisor", before=360),
-        paragraph("Aditya Mazumdar", before=260),
-        page_break(),
-        heading("Supervisor comments", 2),
-        paragraph("Signature of Supervisor", before=1800),
+        paragraph("____________________________", before=700),
+        paragraph("Signature of Candidate"),
+        paragraph("Aditya Mazumdar | Enrollment No. 23321003"),
+        paragraph("____________________________", before=500),
+        paragraph("Signature of Supervisor"),
         page_break(),
     ])
 
@@ -308,30 +305,30 @@ def build_body():
         paragraph("Keywords: capillary waves; gravity waves; nonlinear waves; Basilisk; volume of fluid; Fourier analysis.",
                   runs=[run("Keywords: ", bold=True), run("capillary waves; gravity waves; nonlinear waves; Basilisk; volume of fluid; Fourier analysis.")]),
         page_break(),
-        paragraph("CONTENTS", style="FrontHeading"),
-        paragraph("Chapter 1: Introduction ........................ 11"),
-        paragraph("Chapter 2: Literature Review ................... 13"),
-        paragraph("Chapter 3: Numerical Methodology ............... 15"),
-        paragraph("Chapter 4: Results and Discussion .............. 18"),
-        paragraph("Chapter 5: Conclusions and Future Work ......... 28"),
-        paragraph("Data Availability and AI-Use Disclosure ........ 29"),
-        paragraph("References ..................................... 30"),
-        paragraph("Appendix A: Reproducibility .................... 31"),
-        paragraph("Appendix B: Project File Inventory ............. 33"),
+        paragraph("TABLE OF CONTENTS", style="FrontHeading"),
+        paragraph("Chapter 1: Introduction ........................ 1"),
+        paragraph("Chapter 2: Literature Review ................... 3"),
+        paragraph("Chapter 3: Numerical Methodology ............... 5"),
+        paragraph("Chapter 4: Results and Discussion .............. 8"),
+        paragraph("Chapter 5: Conclusions and Future Work ......... 18"),
+        paragraph("Data Availability .............................. 19"),
+        paragraph("Declaration on the Use of Artificial Intelligence 20"),
+        paragraph("References ..................................... 21"),
+        paragraph("Appendix A: Reproducibility Record ............. 22"),
         page_break(),
         paragraph("LIST OF FIGURES", style="FrontHeading"),
     ])
     for index, (_, title) in enumerate(FIGURES, 1):
-        p.append(paragraph(f"Figure {index}. {title}", after=70))
+        p.append(paragraph(f"Figure 4.{index}. {title}", after=70))
     p.extend([
         page_break(),
         paragraph("LIST OF TABLES", style="FrontHeading"),
-        paragraph("Table 1. Main physical and numerical quantities."),
-        paragraph("Table 2. Gravity-wave relative RMS errors."),
-        paragraph("Table 3. Peak normalized Fourier modes."),
-        paragraph("Table 4. Travelling-wave diagnostics."),
+        paragraph("Table 3.1. Main physical and numerical quantities."),
+        paragraph("Table 4.1. Gravity-wave relative RMS errors."),
+        paragraph("Table 4.2. Peak normalized Fourier modes."),
+        paragraph("Table 4.3. Travelling-wave diagnostics."),
         page_break(),
-        paragraph("NOMENCLATURE", style="FrontHeading"),
+        paragraph("ABBREVIATIONS AND NOTATION", style="FrontHeading"),
         table([
             ("Symbol", "Meaning", "Units"),
             ("a0", "Initial interface amplitude", "m or nondimensional"),
@@ -357,7 +354,7 @@ def build_body():
 
     # Chapter 1
     p.extend([
-        heading("CHAPTER 1: INTRODUCTION", 1, new_page=True),
+        heading("Chapter 1: Introduction", 1, new_page=True),
         heading("1.1 Background", 2),
         paragraph(
             "A disturbance at an interface between two fluids creates curvature and changes the "
@@ -414,7 +411,7 @@ def build_body():
 
     # Chapter 2
     p.extend([
-        heading("CHAPTER 2: LITERATURE REVIEW", 1, new_page=True),
+        heading("Chapter 2: Literature Review", 1, new_page=True),
         heading("2.1 Linear viscous interfacial waves", 2),
         paragraph(
             "Prosperetti formulated the initial-value problem for motion of two superposed viscous "
@@ -475,16 +472,16 @@ def build_body():
 
     # Chapter 3
     p.extend([
-        heading("CHAPTER 3: NUMERICAL METHODOLOGY", 1, new_page=True),
+        heading("Chapter 3: Numerical Methodology", 1, new_page=True),
         heading("3.1 Governing equations", 2),
         paragraph(
             "Each fluid is treated as incompressible and Newtonian. A single velocity field is "
             "solved over the domain, while density and viscosity depend on volume fraction f. "
             "Surface tension acts at the reconstructed interface.", first_line=540,
         ),
-        equation("∇ · u = 0"),
-        equation("ρ(∂u/∂t + u · ∇u) = −∇p + ∇ · [μ(∇u + ∇uᵀ)] + ρg + σκδₛn"),
-        equation("∂f/∂t + u · ∇f = 0"),
+        equation("∇ · u = 0", 1),
+        equation("ρ(∂u/∂t + u · ∇u) = −∇p + ∇ · [μ(∇u + ∇uᵀ)] + ρg + σκδₛn", 2),
+        equation("∂f/∂t + u · ∇f = 0", 3),
         paragraph(
             "Here n is interface normal, κ is curvature, and δs restricts capillary force to "
             "the interface. Mixture properties follow f through ρ = fρ1 + (1-f)ρ2 and the "
@@ -514,7 +511,7 @@ def build_body():
             ("Initial amplitude", "0.1 and 0.5", "0.01"),
             ("Maximum CFL", "0.5", "solver controlled"),
         ], [2400, 3300, 2300]),
-        paragraph("Table 1. Main physical and numerical quantities used in the controlled studies.", style="Caption", align="center"),
+        paragraph("Table 3.1. Main physical and numerical quantities used in the controlled studies.", style="Caption", align="center"),
         heading("3.4 Initial and boundary conditions", 2),
         paragraph(
             "Standing-wave cases begin from a stationary cosine interface, η(x,0) = a0 cos(2πx), "
@@ -524,7 +521,7 @@ def build_body():
             "at a0 = 0.01 but adds a phase-matched linear velocity potential so the crest moves to "
             "the right.", first_line=540,
         ),
-        equation("η(x,t) = a0 cos(kx − ωt)"),
+        equation("η(x,t) = a0 cos(kx − ωt)", 4),
         heading("3.5 Amplitude and Fourier diagnostics", 2),
         paragraph(
             "Amplitude history measures oscillation and viscous decay. To describe shape rather "
@@ -532,9 +529,9 @@ def build_body():
             "harmonic n, cosine and sine projections are evaluated from the vertically integrated "
             "VOF field.", first_line=540,
         ),
-        equation("Cₙ(t) = (2/L) ∫₀ᴸ η(x,t) cos(2πnx/λ) dx"),
-        equation("Sₙ(t) = −(2/L) ∫₀ᴸ η(x,t) sin(2πnx/λ) dx"),
-        equation("Aₙ(t) = √[Cₙ²(t) + Sₙ²(t)]"),
+        equation("Cₙ(t) = (2/L) ∫₀ᴸ η(x,t) cos(2πnx/λ) dx", 5),
+        equation("Sₙ(t) = −(2/L) ∫₀ᴸ η(x,t) sin(2πnx/λ) dx", 6),
+        equation("Aₙ(t) = √[Cₙ²(t) + Sₙ²(t)]", 7),
         paragraph(
             "Here λ = 1 is wavelength and L = 2 is domain length. The minus sign in S_n records "
             "the signed convention used by the vertically integrated VOF implementation; it does "
@@ -563,7 +560,7 @@ def build_body():
 
     # Chapter 4
     p.extend([
-        heading("CHAPTER 4: RESULTS AND DISCUSSION", 1, new_page=True),
+        heading("Chapter 4: Results and Discussion", 1, new_page=True),
         heading("4.1 Small-amplitude capillary benchmark", 2),
         paragraph(
             "The standard capillary-wave test reproduces damped oscillation about the equilibrium "
@@ -595,7 +592,7 @@ def build_body():
             ("32", "0.00807759"),
             ("64", "0.00455815"),
         ], [3600, 3600]),
-        paragraph("Table 2. Gravity-wave relative RMS errors.", style="Caption", align="center"),
+        paragraph("Table 4.1. Gravity-wave relative RMS errors.", style="Caption", align="center"),
         heading("4.3 Selected literature-parameter cases", 2),
         paragraph(
             "Three additional cases broadened the setup checks. Pan et al. supplied a modern "
@@ -622,7 +619,7 @@ def build_body():
             ("0.1", "2.09%", "0.136%", "0.0334%"),
             ("0.5", "19.75%", "10.43%", "6.91%"),
         ], [2200, 1900, 1900, 1900]),
-        paragraph("Table 3. Peak Fourier magnitudes normalized by initial amplitude.", style="Caption", align="center"),
+        paragraph("Table 4.2. Peak Fourier magnitudes normalized by initial amplitude.", style="Caption", align="center"),
     ])
     add_figure(p, 8, 7)
     add_figure(p, 9, 8)
@@ -662,7 +659,7 @@ def build_body():
             ("Measured/theoretical phase speed", "0.90572"),
             ("Final/initial first-mode amplitude", "49.65%"),
         ], [4200, 3000]),
-        paragraph("Table 4. Travelling-wave diagnostics.", style="Caption", align="center"),
+        paragraph("Table 4.3. Travelling-wave diagnostics.", style="Caption", align="center"),
     ])
     add_figure(p, 12, 11)
     add_figure(p, 13, 12)
@@ -683,7 +680,7 @@ def build_body():
 
     # Chapter 5 and back matter
     p.extend([
-        heading("CHAPTER 5: CONCLUSIONS AND FUTURE WORK", 1, new_page=True),
+        heading("Chapter 5: Conclusions and Future Work", 1, new_page=True),
         heading("5.1 Conclusions", 2),
         paragraph(
             "Autumn work established a reproducible Basilisk workflow for standing and travelling "
@@ -713,7 +710,7 @@ def build_body():
             "files currently reside "
             "in the `capwave-run` and `gravity-run` project directories.", first_line=540,
         ),
-        heading("AI-USE DISCLOSURE", 1),
+        heading("DECLARATION ON THE USE OF ARTIFICIAL INTELLIGENCE", 1, new_page=True),
         paragraph(
             "I hereby declare that I have disclosed all instances where AI (Artificial "
             "Intelligence) was used in creation of this report. AI use was limited to code "
@@ -727,7 +724,7 @@ def build_body():
         paragraph("[5] Janodet, R.; van Wachem, B.; Denner, F. A Fully-Coupled Algorithm with Implicit Surface Tension Treatment for Interfacial Flows with Large Density Ratios. J. Comput. Phys. 2025, 520, 113520. https://doi.org/10.1016/j.jcp.2024.113520."),
         paragraph("[6] Basilisk. Capillary Wave Test and Source Code. https://basilisk.fr/src/test/capwave.c (accessed 2026-11-22)."),
         paragraph("[7] Basilisk. Gravity Wave Test and Source Code. https://basilisk.fr/src/test/gravity.c (accessed 2026-11-22)."),
-        heading("APPENDIX A: REPRODUCIBILITY", 1, new_page=True),
+        heading("APPENDIX A: REPRODUCIBILITY RECORD", 1, new_page=True),
         paragraph("Working directory for capillary cases: /home/redacted/Desktop/projects/capwave-run", style="Code"),
         heading("A.1 Standard capillary benchmark", 2),
         paragraph("../basilisk/src/qcc -O2 -Wall capwave.c -o capwave -lm", style="Code"),
@@ -759,17 +756,6 @@ def build_body():
         paragraph("python3 plot_travelling_wave.py", style="Code"),
         heading("A.6 Verification", 2),
         paragraph("python3 -m unittest discover -v", style="Code"),
-        heading("APPENDIX B: PROJECT FILE INVENTORY", 1, new_page=True),
-        table([
-            ("File or directory", "Purpose"),
-            ("capwave-run/capwave.c", "Classical standing capillary-wave benchmark"),
-            ("gravity-run/", "Gravity-wave reproduction and convergence output"),
-            ("capwave-run/nonlinear_fourier.c", "Finite-amplitude standing-wave and Fourier solver"),
-            ("capwave-run/travelling_wave.c", "Right-travelling capillary-wave solver"),
-            ("capwave-run/*.dat", "Raw amplitude, Fourier, phase, and interface data"),
-            ("capwave-run/plot_*.py", "Data-driven plotting scripts"),
-            ("capwave-run/test_*.py", "Compilation, physics, output, and plotting checks"),
-        ], [3300, 4700]),
     ])
 
     section = (
@@ -802,7 +788,7 @@ def styles_xml():
 <w:rPr><w:b/><w:bCs/></w:rPr></w:style>
 <w:style w:type="paragraph" w:styleId="FrontHeading"><w:name w:val="Front Heading"/><w:basedOn w:val="Normal"/>
 <w:pPr><w:jc w:val="center"/><w:spacing w:before="240" w:after="420"/><w:keepNext/></w:pPr>
-<w:rPr><w:b/><w:bCs/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr></w:style>
+<w:rPr><w:b/><w:bCs/><w:color w:val="{NAVY}"/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr></w:style>
 <w:style w:type="paragraph" w:styleId="Caption"><w:name w:val="caption"/><w:basedOn w:val="Normal"/>
 <w:pPr><w:jc w:val="center"/><w:spacing w:after="220" w:line="300" w:lineRule="auto"/><w:keepNext/></w:pPr>
 <w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style>
@@ -837,6 +823,7 @@ def relationships_xml():
         '<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/fontTable" Target="fontTable.xml"/>',
         '<Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>',
         '<Relationship Id="rId90" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>',
+        '<Relationship Id="rId91" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/iitr-logo.png"/>',
     ]
     for index, _ in enumerate(FIGURES):
         relationships.append(
@@ -885,6 +872,7 @@ def build_report():
 
     for index, (relative, _) in enumerate(FIGURES, 1):
         files[f"word/media/report_figure_{index:02d}.png"] = (PROJECTS / relative).read_bytes()
+    files["word/media/iitr-logo.png"] = IITR_LOGO.read_bytes()
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     with ZipFile(OUTPUT, "w", ZIP_DEFLATED) as target:
@@ -894,7 +882,7 @@ def build_report():
     with ZipFile(OUTPUT) as check:
         if check.testzip() is not None:
             raise RuntimeError("invalid DOCX ZIP package")
-        if len([name for name in check.namelist() if name.startswith("word/media/")]) != len(FIGURES):
+        if len([name for name in check.namelist() if name.startswith("word/media/")]) != len(FIGURES) + 1:
             raise RuntimeError("figure embedding incomplete")
     return OUTPUT
 

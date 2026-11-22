@@ -31,25 +31,25 @@ class PdfRendererTest(unittest.TestCase):
         ).stdout
         for text in (
             "NONLINEAR EFFECTS ON CAPILLARY-GRAVITY WAVES",
-            "CHAPTER 2: LITERATURE REVIEW",
-            "CHAPTER 4: RESULTS AND DISCUSSION",
+            "Chapter 2: Literature Review",
+            "Chapter 4: Results and Discussion",
             "19.75%",
             "0.90572",
             "https://github.com/sivk-kex/btp-codes",
             "disclosed all instances",
-            "Supervisor comments",
         ):
             self.assertIn(text, extracted)
+        self.assertNotIn("Supervisor comments", extracted)
         self.assertNotIn("?", extracted)
         self.assertNotIn("Update table of contents", extracted)
         self.assertIn("Chapter 1: Introduction", extracted)
         self.assertNotIn("Quantity | Standing/Fourier cases", extracted)
         self.assertNotIn("integral_", extracted)
         self.assertNotIn("sqrt[", extracted)
-        self.assertNotIn("________________", extracted)
-        self.assertRegex(extracted, r"(?m)^Chapter 2: Literature Review .* 13$")
-        self.assertRegex(extracted, r"(?m)^References .* 30$")
-        self.assertRegex(extracted, r"(?m)^Appendix B: Project File Inventory .* 33$")
+        self.assertIn("________________", extracted)
+        self.assertRegex(extracted, r"(?m)^Chapter 2: Literature Review .* 3$")
+        self.assertRegex(extracted, r"(?m)^References .* 21$")
+        self.assertRegex(extracted, r"(?m)^Appendix A: Reproducibility Record .* 22$")
 
     def test_ascii_conversion_preserves_letter_t(self):
         self.assertEqual(ascii_text("technical test text"), "technical test text")
@@ -59,7 +59,7 @@ class PdfRendererTest(unittest.TestCase):
             ["pdftotext", "-layout", str(PDF), "-"],
             check=True, text=True, capture_output=True,
         ).stdout
-        declaration_page = next(page for page in extracted.split("\f") if "DECLARATIONS" in page)
+        declaration_page = next(page for page in extracted.split("\f") if "CANDIDATE'S DECLARATION" in page)
         self.assertNotIn("Supervisor comments", declaration_page)
 
     def test_methodology_equations_have_no_missing_glyphs(self):
@@ -69,7 +69,7 @@ class PdfRendererTest(unittest.TestCase):
         ).stdout
         methodology_page = next(
             page for page in extracted.split("\f")
-            if "CHAPTER 3: NUMERICAL METHODOLOGY" in page
+            if "Chapter 3: Numerical Methodology" in page
         )
         self.assertNotIn("?", methodology_page)
         self.assertNotIn("nabla", methodology_page)

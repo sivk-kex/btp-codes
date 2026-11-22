@@ -21,22 +21,25 @@ class AutumnReportTest(unittest.TestCase):
     def test_contains_required_report_sections(self):
         for text in (
             "NONLINEAR EFFECTS ON CAPILLARY-GRAVITY WAVES",
-            "SUPERVISOR CERTIFICATE",
-            "DECLARATIONS",
+            "Standing and Travelling Interfacial-Wave Simulations in Basilisk",
+            "CERTIFICATE",
+            "CANDIDATE’S DECLARATION",
             "ACKNOWLEDGEMENTS",
             "ABSTRACT",
-            "CONTENTS",
-            "NOMENCLATURE",
-            "CHAPTER 1: INTRODUCTION",
-            "CHAPTER 2: LITERATURE REVIEW",
-            "CHAPTER 3: NUMERICAL METHODOLOGY",
-            "CHAPTER 4: RESULTS AND DISCUSSION",
-            "CHAPTER 5: CONCLUSIONS AND FUTURE WORK",
+            "TABLE OF CONTENTS",
+            "ABBREVIATIONS AND NOTATION",
+            "Chapter 1: Introduction",
+            "Chapter 2: Literature Review",
+            "Chapter 3: Numerical Methodology",
+            "Chapter 4: Results and Discussion",
+            "Chapter 5: Conclusions and Future Work",
             "DATA AVAILABILITY",
+            "DECLARATION ON THE USE OF ARTIFICIAL INTELLIGENCE",
             "REFERENCES",
-            "APPENDIX A: REPRODUCIBILITY",
+            "APPENDIX A: REPRODUCIBILITY RECORD",
         ):
             self.assertIn(text, self.document)
+        self.assertNotIn("Supervisor comments", self.document)
 
     def test_uses_required_page_and_text_format(self):
         self.assertIn('w:ascii="Times New Roman"', self.styles)
@@ -56,12 +59,17 @@ class AutumnReportTest(unittest.TestCase):
         self.assertIn("https://github.com/sivk-kex/btp-codes", self.document)
         self.assertNotIn("DATA_ARCHIVE_URL_PENDING", self.document)
         self.assertIn("Signature of Supervisor", self.document)
-        self.assertNotIn("________________", self.document)
+        self.assertIn("________________", self.document)
 
     def test_embeds_project_figures(self):
         media = [name for name in self.names if name.startswith("word/media/")]
         self.assertGreaterEqual(len(media), 10)
         self.assertGreaterEqual(self.document.count("Figure "), 10)
+
+    def test_embeds_iitr_logo_and_template_color(self):
+        self.assertTrue((ROOT / "assets" / "iitr-logo.png").exists())
+        self.assertIn("word/media/iitr-logo.png", self.names)
+        self.assertIn("1F3F7F", self.document + self.styles)
 
     def test_preserves_scientific_scope(self):
         for value in ("19.75%", "10.43%", "6.91%", "0.24%", "0.90572", "49.65%"):
@@ -80,8 +88,10 @@ class AutumnReportTest(unittest.TestCase):
         self.assertIn("adaptive axisymmetric quadtree", self.document)
 
     def test_front_matter_and_reproduction_commands_are_consistent(self):
-        self.assertIn("Table 4. Travelling-wave diagnostics.", self.document)
-        self.assertNotIn("Table 5. Travelling-wave diagnostics.", self.document)
+        self.assertIn("Table 4.3. Travelling-wave diagnostics.", self.document)
+        self.assertNotIn("Table 4.4. Travelling-wave diagnostics.", self.document)
+        for label in ("Figure 4.1.", "Figure 4.13.", "Table 3.1.", "Table 4.1.", "Table 4.2."):
+            self.assertIn(label, self.document)
         for command in (
             "./nonlinear_fourier 0.5 fourier-a0-0.5-N64.dat profiles-a0-0.5-N64.dat 64",
             "./nonlinear_fourier 0.5 fourier-a0-0.5-N256.dat profiles-a0-0.5-N256.dat 256",

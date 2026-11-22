@@ -251,20 +251,25 @@ def build_body():
         page_break(),
         paragraph("CANDIDATE’S DECLARATION", style="FrontHeading"),
         paragraph(
-            "I hereby declare that the report for CHP-400A titled “Nonlinear Effects on "
-            "Capillary-Gravity Waves” represents my own work carried out under the supervision "
-            "of Prof. Palas K. Farsoiya.", first_line=540,
+            "I hereby declare that the work presented in this report entitled “Nonlinear Effects "
+            "on Capillary-Gravity Waves”, submitted in partial fulfilment of the requirements of "
+            "the course CHP400A: B.Tech. Project in the Department of Chemical Engineering, "
+            "Indian Institute of Technology Roorkee, is an authentic record of my own work "
+            "carried out during the autumn semester of the academic session 2026–27 under the "
+            "supervision of Prof. Palas K. Farsoiya.", first_line=540,
         ),
         paragraph(
-            "The original code, simulation inputs, numerical outputs, and plotting scripts used "
-            "in this report are available to the evaluation committee through: "
-            "https://github.com/sivk-kex/btp-codes.", first_line=540,
+            "The matter presented in this report has not been submitted by me for the award of "
+            "any other degree or course credit. Wherever the work of others has been used, it "
+            "has been duly acknowledged and cited. All data, code and results reported here "
+            "were produced by me, none has been fabricated, and the use of artificial-"
+            "intelligence tools is disclosed in the section on AI usage.", first_line=540,
         ),
-        paragraph("____________________________", before=700),
-        paragraph("Signature of Candidate"),
-        paragraph("Aditya Mazumdar | Enrollment No. 23321003"),
-        paragraph("____________________________", before=500),
-        paragraph("Signature of Supervisor"),
+        paragraph("_________________________", align="center", before=700),
+        paragraph("Aditya Mazumdar", align="center", runs=[run("Aditya Mazumdar", bold=True)]),
+        paragraph("Enrolment No. 23321003", align="center"),
+        paragraph("Date: ______________", before=500),
+        paragraph("Place: Roorkee"),
         page_break(),
     ])
 

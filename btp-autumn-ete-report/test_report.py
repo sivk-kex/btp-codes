@@ -49,7 +49,11 @@ class AutumnReportTest(unittest.TestCase):
         self.assertIn('<w:mirrorMargins/>', self.settings)
 
     def test_contains_required_declarations(self):
-        self.assertIn("represents my own work", self.document)
+        self.assertIn("is an authentic record of my own work", self.document)
+        self.assertIn("Wherever the work of others has been used, it has been duly acknowledged and cited.", self.document)
+        self.assertIn("none has been fabricated", self.document)
+        self.assertIn("Date: ______________", self.document)
+        self.assertIn("Place: Roorkee", self.document)
         self.assertIn(
             "I hereby declare that I have disclosed all instances where AI (Artificial Intelligence) was used in creation of this report.",
             self.document,
@@ -58,7 +62,7 @@ class AutumnReportTest(unittest.TestCase):
         self.assertNotIn("All technical content", self.document)
         self.assertIn("https://github.com/sivk-kex/btp-codes", self.document)
         self.assertNotIn("DATA_ARCHIVE_URL_PENDING", self.document)
-        self.assertIn("Signature of Supervisor", self.document)
+        self.assertNotIn("Signature of Candidate", self.document)
         self.assertIn("________________", self.document)
 
     def test_embeds_project_figures(self):

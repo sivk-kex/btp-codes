@@ -23,7 +23,7 @@ class AutumnReportTest(unittest.TestCase):
             "NONLINEAR EFFECTS ON CAPILLARY-GRAVITY WAVES",
             "Standing and Travelling Interfacial-Wave Simulations in Basilisk",
             "CERTIFICATE",
-            "DECLARATIONS",
+            "Declarations",
             "ACKNOWLEDGEMENTS",
             "ABSTRACT",
             "TABLE OF CONTENTS",
@@ -49,11 +49,13 @@ class AutumnReportTest(unittest.TestCase):
         self.assertIn('<w:mirrorMargins/>', self.settings)
 
     def test_contains_required_declarations(self):
-        self.assertIn("represents my own work", self.document)
-        self.assertIn("I have disclosed all instances where AI (Artificial Intelligence) was used in creation of this report.", self.document)
-        self.assertIn("The data, code, and simulation files included in this report are available", self.document)
+        self.assertIn("[I/We] hereby declare that the report for CHP400A", self.document)
+        self.assertIn("[Insert Project Title]", self.document)
+        self.assertIn("[my/our] own work", self.document)
+        self.assertIn("[Supervisor's Name]", self.document)
+        self.assertIn("[I/We] have disclosed all instances where AI (Artificial Intelligence) was used in creation of this report.", self.document)
+        self.assertIn("The data/code/simulation files included in this report is [available/non-available]", self.document)
         self.assertIn("Supervisor Comments", self.document)
-        self.assertIn("No comments provided.", self.document)
         self.assertIn(
             "I hereby declare that I have disclosed all instances where AI (Artificial Intelligence) was used in creation of this report.",
             self.document,
@@ -62,10 +64,7 @@ class AutumnReportTest(unittest.TestCase):
         self.assertNotIn("All technical content", self.document)
         self.assertIn("https://github.com/sivk-kex/btp-codes", self.document)
         self.assertNotIn("DATA_ARCHIVE_URL_PENDING", self.document)
-        self.assertNotIn("Signature of Candidate", self.document)
         self.assertIn("________________", self.document)
-        for placeholder in ("[I/We]", "[my/our]", "[Insert Project Title]", "[Supervisor's Name]", "[Name of Student"):
-            self.assertNotIn(placeholder, self.document)
 
     def test_embeds_project_figures(self):
         media = [name for name in self.names if name.startswith("word/media/")]

@@ -249,39 +249,34 @@ def build_body():
         paragraph("Indian Institute of Technology Roorkee"),
         paragraph("Date: ____________________"),
         page_break(),
-        paragraph("DECLARATIONS", style="FrontHeading"),
+        paragraph("Declarations", style="FrontHeading"),
         paragraph(
-            "I hereby declare that the report for CHP400A titled “Nonlinear Effects on "
-            "Capillary-Gravity Waves” represents my own work carried out under the supervision "
-            "of Prof. Palas K. Farsoiya.", first_line=540,
+            "[I/We] hereby declare that the report for CHP400A titled [Insert Project Title] "
+            "represents [my/our] own work carried out under the supervision of "
+            "[Supervisor's Name].", first_line=540,
         ),
-        paragraph("_________________________", align="center", before=320),
-        paragraph("Aditya Mazumdar", align="center", runs=[run("Aditya Mazumdar", bold=True)]),
-        paragraph("Enrolment No. 23321003", align="center"),
+        paragraph("__________________        __________________        __________________", align="center", before=320),
+        paragraph("[Name of Student1]        [Name of Student2]        [Name of Student3]", align="center"),
         paragraph(
-            "I hereby declare that I have disclosed all instances where AI (Artificial "
-            "Intelligence) was used in creation of this report. AI use was limited to code "
-            "drafting, report organization, and language editing.", first_line=540, before=300,
-        ),
-        paragraph("_________________________", align="center", before=260),
-        paragraph("Aditya Mazumdar", align="center", runs=[run("Aditya Mazumdar", bold=True)]),
-        paragraph("Enrolment No. 23321003", align="center"),
-        paragraph(
-            "The data, code, and simulation files included in this report are available to the "
-            "evaluation committee at https://github.com/sivk-kex/btp-codes.",
+            "[I/We] hereby declare that [I/We] have disclosed all instances where AI "
+            "(Artificial Intelligence) was used in creation of this report.",
             first_line=540, before=300,
         ),
-        paragraph("_________________________", align="center", before=260),
-        paragraph("Prof. Palas K. Farsoiya", align="center", runs=[run("Prof. Palas K. Farsoiya", bold=True)]),
-        paragraph("Project Supervisor", align="center"),
-        paragraph("_________________________", align="center", before=260),
-        paragraph("Aditya Mazumdar", align="center", runs=[run("Aditya Mazumdar", bold=True)]),
-        paragraph("Enrolment No. 23321003", align="center"),
-        paragraph("Supervisor Comments (If any):", before=300, runs=[run("Supervisor Comments (If any):", bold=True)]),
-        paragraph("No comments provided."),
-        paragraph("_________________________", align="center", before=260),
-        paragraph("Prof. Palas K. Farsoiya", align="center", runs=[run("Prof. Palas K. Farsoiya", bold=True)]),
-        paragraph("Project Supervisor", align="center"),
+        paragraph("__________________        __________________        __________________", align="center", before=260),
+        paragraph("[Name of Student1]        [Name of Student2]        [Name of Student3]", align="center"),
+        paragraph(
+            "The data/code/simulation files included in this report is [available/non-available] "
+            "[Enter how committee can access the data]. OR [Enter Reason for Partial/Complete "
+            "Non-availability]",
+            first_line=540, before=300,
+        ),
+        paragraph("____________________", align="center", before=260),
+        paragraph("[Signature of Supervisor]", align="center"),
+        paragraph("__________________        __________________        __________________", align="center", before=260),
+        paragraph("[Name of Student1]        [Name of Student2]        [Name of Student3]", align="center"),
+        paragraph("Supervisor Comments (If any):", before=300),
+        paragraph("_______________________", align="center", before=260),
+        paragraph("[Supervisor Signature]", align="center"),
         page_break(),
     ])
 

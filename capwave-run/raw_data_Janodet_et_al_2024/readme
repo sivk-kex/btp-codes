@@ -1,0 +1,14 @@
+*** Laplace equilibrium ***
+Data logs: Maximum Capillary number computed over the non-dimensional viscous time, both in 2D and 3D, for dt/dt_sigma = 16 (green curves in plots (a) and (b) of Section 5.1).
+Paraview files: results.xmf allows to open the "Fields" and "Meshes" for the 2D case, for dt/dt_sigma = 16 (pressure field and spurious currents shown in Section 5.1).
+
+*** Capillary wave ***
+Data logs: Wave amplitude [m] over time [s] for the 3 resolutions considered (50, 100, and 200 points per wavelength), for dt/dt_sigma = 8 (red curves in plots (a) (c) (e) of Section 5.2).
+Paraview files: results.xmf allows to open the "Fields" and "Meshes" for 100 points per wavelength with dt/dt_sigma = 8 (pressure and vertical-velocity fields in Section 5.2).
+
+*** Oscillating droplet ***
+Data logs: Kinetic energy of the droplet + dynamic time-step evolution can be plotted as a function of time [s] for dt/dt_sigma = 10 (red curves in plots of Section 5.3).
+Paraview files: results.xmf allows to open the "Fields" and "Meshes" for dt/dt_sigma = 10.
+
+*** Rayleigh-Plateau instability ***
+Data logs: Maximum and minimum radii of the liquid jet over time [s] for dt/dt_sigma = 8 (red dots in plots of Section 5.4). The data have been obtained by setting 2% of the reference radius as an initial amplitude, and then rescaled for the plots to be equivalent to an initial amplitude of 3% of the reference radius as mentioned in the main text of the paper.

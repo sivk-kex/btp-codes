@@ -51,5 +51,26 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Local build and cache output
+__pycache__/
+*.py[cod]
+.qcc*/
+*.ppm
+*.tar.gz
+*-truncated-*.dat
+capwave-run/capwave
+capwave-run/capwave-a0-0.1
+capwave-run/capwave-a0-0.5
+capwave-run/nonlinear_fourier*
+!capwave-run/nonlinear_fourier.c
+capwave-run/pan2024_capwave
+capwave-run/janodet2024_capwave
+capwave-run/kayal2022_wave
+capwave-run/travelling_wave
+capwave-run/movie/capwave_movie
+gravity-run/gravity
+capwave-run/kayal2022-paper.pdf
+basilisk
+
 # debug information files
 *.dwo

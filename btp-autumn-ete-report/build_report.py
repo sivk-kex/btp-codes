@@ -260,9 +260,8 @@ def build_body():
         heading("Data and code declaration", 2),
         paragraph(
             "The original code, simulation inputs, numerical outputs, and plotting scripts used "
-            "in this report will be made available to the evaluation committee through: "
-            "https://github.com/sivk-kex/btp-codes. Repository access must be enabled for the "
-            "evaluation committee before submission.", first_line=540,
+            "in this report are available to the evaluation committee through: "
+            "https://github.com/sivk-kex/btp-codes.", first_line=540,
         ),
         paragraph("Signature of Supervisor", before=360),
         paragraph("Aditya Mazumdar", before=260),
@@ -709,9 +708,9 @@ def build_body():
         bullet("Use HPC resources for fine-grid sweeps or three-dimensional cases if scope and access permit."),
         heading("DATA AVAILABILITY", 1, new_page=True),
         paragraph(
-            "Code, simulation inputs, raw numerical output, plotting scripts, and tests will be "
-            "archived for committee access at https://github.com/sivk-kex/btp-codes. Repository "
-            "access must be enabled before report submission. Main working files currently reside "
+            "Code, simulation inputs, raw numerical output, plotting scripts, and tests are "
+            "archived for committee access at https://github.com/sivk-kex/btp-codes. Main working "
+            "files currently reside "
             "in the `capwave-run` and `gravity-run` project directories.", first_line=540,
         ),
         heading("AI-USE DISCLOSURE", 1),

@@ -43,11 +43,10 @@ python3 -m unittest discover -s btp-autumn-ete-report -p 'test_*.py' -v
 
 ## Required before submission
 
-1. Make `https://github.com/sivk-kex/btp-codes` public or grant evaluation committee access.
-2. Confirm supervisor name/title and obtain signatures.
-3. Run Turnitin and obtain supervisor verification.
-4. Let supervisor review scientific wording and approve final version.
-5. Open editable DOCX in Microsoft Word on a machine with Times New Roman installed and update it if department requires exact Word pagination.
+1. Confirm supervisor name/title and obtain signatures.
+2. Run Turnitin and obtain supervisor verification.
+3. Let supervisor review scientific wording and approve final version.
+4. Open editable DOCX in Microsoft Word on a machine with Times New Roman installed and update it if department requires exact Word pagination.
 
 ## Known limits
 

@@ -86,8 +86,8 @@ ImageDraw.Draw(y_label).text((0, 0), "Signed amplitude  a(t)/a₀",
                             font=label_font, fill="#26384c")
 y_label = y_label.rotate(90, expand=True)
 image.paste(y_label, (28, (top + bottom - y_label.height)//2), y_label)
-draw.text((left, height - 45),
+draw.text((left, 62),
           f"Janodet et al. case · ρ₁/ρ₂ = μ₁/μ₂ = 1000 · La = 300 · RMS difference = {rms:.3g}",
-          font=tick_font, fill="#526174")
+          font=font(18), fill="#526174")
 image.save("janodet2024-amplitude-vs-time.png")
 print(f"janodet2024-amplitude-vs-time.png RMS={rms:.8g}")

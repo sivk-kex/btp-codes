@@ -1,0 +1,13 @@
+{
+  "creators": [
+    {
+      "name": "Mazumdar, Aditya",
+      "affiliation": "Indian Institute of Technology Roorkee"
+    }
+  ],
+  "title": "Nonlinear Effects on Capillary-Gravity Waves: Basilisk Simulations",
+  "description": "Basilisk simulation code, numerical outputs, and plots for capillary and gravity wave benchmarks, nonlinear standing waves, and a travelling capillary wave.",
+  "upload_type": "software",
+  "access_right": "restricted",
+  "access_conditions": "Access may be granted on request by the record owner."
+}
